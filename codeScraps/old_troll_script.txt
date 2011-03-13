@@ -1,0 +1,217 @@
+custom_troll_hitting_old = (
+  0.6,0,0,
+  [(eq,"$trolls_in_battle",1),],
+  [ 
+	
+    (try_begin), 
+	  # swing charged bowls (if any)
+	  (assign,":troll","$g_ready_troll"),
+	  (neq,":troll",0),
+	  (store_agent_hit_points,":now_hp",":troll",1),
+	  (store_add,":now_hp",":now_hp",2), # if less than 3 HP lost, not stunned
+	  (ge,":now_hp", "$g_troll_last_hp"), # don't swing if lost any hp since it charged
+	  (agent_is_alive,":troll"),
+      #(display_message,"@DEBUG: troll swing!"),
+	  
+	  # make last piece of animation (should be useless, but necessary for when troll misteriously loses attack animation)
+	  (try_begin),
+	    (eq,"$g_troll_chosen_move",1),
+	    (agent_set_animation, ":troll", "anim_ready_and_release_slashright_troll"),
+	  (else_try),
+	    (eq,"$g_troll_chosen_move",2),
+	    (agent_set_animation, ":troll", "anim_ready_and_release_slashleft_troll"),
+	  (else_try),
+	    (agent_set_animation, ":troll", "anim_ready_and_release_overswing_troll"),
+  	  (end_try),
+	  #(agent_set_animation_progress, ":troll", 66),
+	  
+	  (agent_play_sound,":troll","snd_big_weapon_swing"),
+	  
+	  #(try_begin),
+		#(eq,"$g_troll_chosen_move",3),
+		#(agent_get_look_position,1,":troll"), # because move 3 (overswing) rotates torso!
+	  #(else_try),
+		(agent_get_position,1,":troll"),
+  	  #(end_try),
+	  
+	  (try_for_agents,":victim"),
+			(agent_is_alive,":victim"),
+   	        (neq,":troll",":victim"), # a troll doesn't hit itself
+			(agent_get_position,2,":victim"),
+			(neg|position_is_behind_position,2,1),
+			(get_distance_between_positions,":dist",1,2),
+			(lt,":dist",300), # troll disntance
+			
+			# decrease hit angle range for owerswing:
+			(assign,":hit",1),
+			(try_begin),
+			   (ge,"$g_troll_chosen_move",3), # if overswing: smaller angle - interval 
+			   (copy_position,3,1),
+			   (position_rotate_z,3,75),
+  			   (position_is_behind_position,2,3),
+			   (position_rotate_z,3,-150),
+  			   (position_is_behind_position,2,3),
+  			   (assign,":hit",0), # misses troops if not in +/- 30 degrees 
+			(end_try),
+			(eq,":hit",1),
+			
+			# test if friendly troll...
+			(agent_get_troop_id,reg0,":victim"),
+			(troop_get_type, ":victim_type", reg0),
+			(agent_get_team, reg1, ":victim"),
+			(agent_get_team, reg2, ":troll"),
+			(neq|this_or_next, ":victim_type", tf_troll), # trolls don't hit trolls!
+			(teams_are_enemies, reg1, reg2),  # ...unless they are enemy trolls
+			
+			(try_begin),
+			   (ge,"$g_troll_chosen_move",3),
+			   #(agent_deliver_damage_to_agent, ":troll", ":victim"),  # double damage for overswing
+			(try_end),
+			(try_begin),
+				(agent_is_human,":victim"),
+				(agent_deliver_damage_to_agent, ":troll", ":victim"),
+				
+				# now turn victim position according to swing direction  to better determine possible flight direction if hit
+				(try_begin),
+			      (eq,"$g_troll_chosen_move",2), # if swing left
+			      (position_rotate_z,2,45),
+				(else_try),
+			      (eq,"$g_troll_chosen_move",1), # if swing right
+			      (position_rotate_z,2,-45),
+				(try_end),
+
+				
+				(try_begin),
+				  (agent_is_alive,":victim"),
+				  (try_begin),
+				    (eq, ":victim_type", tf_troll), # trolls don't send other trolls flying back: they just knowk them back
+				    (agent_set_animation, ":victim", "anim_strike_fall_back_rise"),
+				  (else_try),
+				    # human (non trolls, non horse) victims
+					(try_begin),
+					  (position_is_behind_position,1,2), # troll is on back of victim
+				      (agent_set_animation, ":victim", "anim_strike_fly_front_rise"), # send them flying front
+					(else_try),
+					  # troll is in front of victim
+					  
+					  (assign,":from_left",0), # animate as if swing comes from left?
+					  (try_begin),
+					    (eq,"$g_troll_chosen_move",2), # if left swing, hurl, 
+						(assign,":from_left",1),       # then yes
+					  (else_try),
+					    (eq,"$g_troll_chosen_move",3), # if overswing, roll
+						(store_random_in_range,":from_left",0,2),  # then random
+					  (try_end),
+					  (try_begin),
+					    (eq,":from_left",1), # if swing left
+					    (agent_set_animation, ":victim", "anim_strike_fly_back_rise_from_left"), # send them flying back
+					  (else_try),
+					    (agent_set_animation, ":victim", "anim_strike_fly_back_rise"), # send them flying back
+					  (try_end),
+					(try_end),
+				    (store_random_in_range,reg0,1,5),
+				    (agent_set_animation_progress, ":victim", reg0), # differentiate timings a bit
+  				  (try_end),
+				(else_try),
+				    # victim has been killed: won't rise after fall USELESS: game won't listen...
+					#(try_begin),
+					#  (position_is_behind_position,1,2), # troll is on back of victim
+				    #  (agent_set_animation, ":victim", "anim_strike_fly_front"), # send them flying front
+					#(else_try),
+					#  (agent_set_animation, ":victim", "anim_strike_fly_back"), # send them flying back
+					#(try_end),			
+					#(display_message,"@DEBUG: troll kills!"),
+				(try_end),
+				
+				#(position_transform_position_to_local,2,1,2),
+				#(position_move_z,2,-10,1),
+				#(position_transform_position_to_parent,2,1,2),
+				#(agent_set_position,":victim",2),
+				(agent_play_sound,":victim","snd_blunt_hit"),
+			(else_try),
+				(agent_set_hit_points,":victim",0), # horses are killed on spot!
+				(agent_deliver_damage_to_agent, ":troll", ":victim"),
+			(try_end),
+  	  (end_try),
+	(try_end),
+	
+	(assign,"$pre_last_ready_troll","$last_ready_troll"),
+	(assign,"$last_ready_troll","$g_ready_troll"),
+	(assign,"$g_ready_troll",0),
+	
+	# any troll charging bowls (if any)
+	(try_for_agents,":troll"),
+	  (agent_get_troop_id,reg0,":troll"),
+	  (troop_get_type, reg0, reg0),
+	  (eq, reg0, tf_troll),
+	  (agent_is_alive,":troll"),
+      (agent_is_human,":troll"),
+
+	  #  for tuning: show current troll HP
+	  (try_begin), 
+	    (store_random_in_range,":random",1,20),
+	    (eq,":random",1), # show it once in 20
+	    (store_agent_hit_points,reg1,":troll"),
+	    (display_message,"@DEBUG: troll health: {reg1}%!"),
+	  (try_end),
+
+
+	  #(agent_set_walk_forward_animation,":troll","anim_walk_forward_troll"),
+	  (neq,":troll","$last_ready_troll"), # he is already swinging
+	  (neq,":troll","$pre_last_ready_troll"), # no consecutive swings
+	  (store_random_in_range,":random",1,101),
+	  (try_begin),
+		(assign, ":player_driven_attack", 0),
+		(get_player_agent_no, ":player_agent"),
+		(eq, ":player_agent", ":troll"),
+		(assign, ":random",100),
+		(key_is_down, key_left_mouse_button),
+		(assign, ":random",1),
+		(assign, ":player_driven_attack", 1),
+	  (try_end),
+	  (le|this_or_next,":random",20), # AI attaks 20% of times
+	  (eq, ":player_driven_attack", 1),
+	  (agent_get_position,1,":troll"),
+	  (agent_get_team, ":troll_team", ":troll"),
+	  (assign, ":found", 0),
+	  (try_for_agents,":victim"), # look for enemies in range
+			(agent_is_alive,":victim"),
+			(agent_get_team, ":victim_team", ":victim"),
+			(teams_are_enemies, ":victim_team", ":troll_team"),
+			(agent_get_position,2,":victim"),
+			(get_distance_between_positions,":dist",1,2),
+			(store_random_in_range, reg0, 0,61), 
+			(val_sub, ":dist", reg0), # swing earlier than in range (sometimes)
+			(lt,":dist",300), # 200+weapon size/2
+			(try_begin),
+				(agent_is_human,":victim"),
+				(neg|position_is_behind_position,2,1),
+				(assign, ":found", 1),
+			(end_try),
+  	  (end_try),
+	  (eq|this_or_next, ":found", 1),
+	  (eq, ":player_driven_attack", 1),
+	  (assign,"$g_ready_troll",":troll"),
+	  (store_random_in_range,"$g_troll_chosen_move",1,4), #1 = left, 2 = right, 3 or more= overhead
+	  (store_agent_hit_points,"$g_troll_last_hp",":troll",1),
+	  (try_begin),
+	    (eq,"$g_troll_chosen_move",1),
+	    (agent_set_animation, ":troll", "anim_ready_slashright_troll"),
+	  (else_try),
+	    (eq,"$g_troll_chosen_move",2),
+	    (agent_set_animation, ":troll", "anim_ready_slashleft_troll"),
+	  (else_try),
+	    (assign,"$g_troll_chosen_move",3),
+	    (agent_set_animation, ":troll", "anim_ready_overswing_troll"),
+  	  (end_try),
+      #(agent_set_scripted_destination, ":troll", 1, 0),
+      #(agent_set_slot, ":troll", slot_agent_is_in_scripted_mode, 1),
+	  (agent_play_sound,":troll","snd_troll_grunt_long"),
+      #(display_message,"@DEBUG: troll ready!"),
+	(end_try),
+  ] 
+)
+
+
+
+

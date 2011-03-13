@@ -1,0 +1,10 @@
+# MTL written from /Volumes/MacMedia2/Personal/TLD/Rohan/Rohan_Helmet_01/Submit/Rohan_Helmet_01.obj
+newmtl Rohan_09501
+Kd 0.8 0.8 0.8
+Ns 256
+d 1
+illum 2
+Ka 0 0 0
+Ks 0.2 0.2 0.2
+map_Kd /Volumes/MacMedia2/Personal/TLD/Rohan/Rohan_Helmet_01/Submit/Helmet01_Color.tga
+map_Bump /Volumes/MacMedia2/Personal/TLD/Rohan/Rohan_Helmet_01/Submit/Helmet01_Bump.tga

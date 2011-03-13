@@ -1,0 +1,60 @@
+
+I just uploaded some changes and wanted to post what I modified.  I figured it might
+be worth having some type of text files which we can update, but its completely up to you
+guys if you find this helpful or want to use it in the future, etc...
+
+- Hokie
+
+===========================================================================
+
+DATE: 	 September 1, 2009
+AUTHOR:  HokieBT
+SUMMARY: playable races + sound effects, minor change to items/troops/game menu/etc
+
+DETAILS:
+
+- all races are coded and selectable at game start or at the "change race" on the camp menu (for testing)
+- most sound effects for races are in but not all textures
+- I added a modding/cheat menu to the camp menu which I find helpful while developing a mod
+- I was testing Trolls in the Quick Battle 1 if you want to check them out
+
+The following files on the SVN were modified (search for #TLD or Hokie):
+  Module System = header_troops.py, module_game_menus.py, module_items.py, module_skins.py, module_sounds.py, module_troops.py
+  Module Files = resource, textures, sounds folder
+  Other = module.ini
+
+If you want to download Native + these changes then grab one of these zip files:
+http://www.sendspace.com/file/kdnen2
+or
+http://www.2shared.com/file/7039762/69fce4dc/TLD_Hokie.html
+
+Other Notes:
+
+SOUNDS - There is a sub-folder called "unused_sounds" in the sounds folder, which was sound effects I didn't know what to do with... 
+corsair_* was combined into the generic man race so I couldn't use those, I wasn't sure if stuff like evil_chant* or horn_* should be 
+used for yells or victories or had another purpose, we combined the urks and urk_hai so I wasn't sure if I should use uruk_hai_* sound 
+effects for that race, I didn't use any of the man_*, etc.  I'll probably need some help sorting through what is left, but if you look 
+at the bottom of module_sounds.py you can see what I added and what races are missing, etc.
+
+TEXTURES & MODELS - I wasn't able to open/export any models from stefano_ork.brf, so currently don't have an orc body/head. I did the trolls, 
+but most of the rest of the races still use the regular human body and face textures.  It also takes a little while to add all the textures/models 
+to a BRF file and then add them into module_skins.py, so if they are all going to be placeholders or be replaced I wasn't sure if we should bother 
+adding them at this time? I also wasn't sure what hairstyles to keep for each race, what color their hair should be, what skin tone they had, etc...
+I'd also need help from you guys deciding what face or body textures go with each race, since I wasn't sure where to put stuff like face_camo*, 
+face_berserker*, etc.
+
+So I'll probably need some help from you guys poking through the original TLD textures and unused sound effects, maybe sorting them into a folder for 
+each race so I have a better idea of what goes with each one.  Or if textures\models\sounds are still being worked on then we might want to wait, but at 
+least with this code integrated we can start using the tf_gondor type of flags for troops, etc.
+
+Anyway, the only thing to really check out in the mod is the Quick Battle with Trolls and the new menu's on the camp menu, 
+but hopefully this will at least get us started.  Let me know if there are any questions, comments, etc.
+
+~Hokie
+
+
+===========================================================================
+
+Mtarini
+
+Updated the textures for the animated map icons.
