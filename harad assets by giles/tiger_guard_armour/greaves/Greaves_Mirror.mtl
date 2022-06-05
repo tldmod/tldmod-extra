@@ -1,0 +1,14 @@
+# Blender MTL File: 'Greaves_Mirror.blend'
+# Material Count: 1
+
+newmtl Greaves
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.010182 0.001557
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Bump Greaves_paint_Greaves_Normal.png
+map_Kd Greaves_paint_Greaves_BaseColor.png
