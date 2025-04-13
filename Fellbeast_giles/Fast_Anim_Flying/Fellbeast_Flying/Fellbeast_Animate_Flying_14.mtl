@@ -1,0 +1,13 @@
+# Blender 3.6.16 MTL File: 'Fellbeast_Animate_Flying_002.blend'
+# www.blender.org
+
+newmtl Low_FB
+Ns 63.638069
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 2
+map_Kd D:/ProtonDrive/My files/TLD/Fellbeast/Textures/Fellbeast_C_02.jpg
+map_d D:/ProtonDrive/My files/TLD/Fellbeast/Textures/Fellbeast_Alpha.jpg
+map_Bump -bm 1.000000 D:/ProtonDrive/My files/TLD/Fellbeast/Marmoset/Bake_001/Bakes/FB__normal.png
