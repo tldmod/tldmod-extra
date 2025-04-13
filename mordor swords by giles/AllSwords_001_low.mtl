@@ -1,0 +1,13 @@
+# Blender 3.6.5 MTL File: 'AllSwords_001_low.blend'
+# www.blender.org
+
+newmtl All_Swords_low
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Painter/001/AllSwords_001_low_All_Swords_low_BaseColor.png
+map_Ns Painter/001/AllSwords_001_low_All_Swords_low_Roughness.png
+map_Bump -bm 1.000000 Painter/001/AllSwords_001_low_All_Swords_low_Normal.png
